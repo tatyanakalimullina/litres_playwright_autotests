@@ -1,0 +1,39 @@
+import pytest
+from playwright.sync_api import Page, expect
+
+
+def test_locator_role(page: Page):
+    page.get_by_role(role="link", name="С чего начать").click()
+    expect(page).to_have_title("Рекомендации для вас- ищите на Литрес")
+    page.get_by_role(role="button", name="Найти").click()
+    expect(page.get_by_text("лина коваль")).to_be_visible()
+
+
+def test_locator_placeholder(page: Page):
+    page.wait_for_load_state("networkidle")  # даём React завершить гидрацию input
+    page.get_by_placeholder("Искать на Литрес").fill("Игра престолов")
+    page.keyboard.press("Enter")
+    expect(
+        page.get_by_role("heading", name="Результаты поиска «Игра престолов»")
+    ).to_be_visible(timeout=15000)
+
+
+def test_locator_datatestid(page: Page):
+    page.get_by_test_id("tab-login").click()
+    expect(page.get_by_text("Почта или логин")).to_be_visible()
+
+
+def test_locator_alttext(page:Page):
+    page.goto("https://www.litres.ru/audiobooks/")
+    page.get_by_alt_text("Логотип Литрес").click()
+    expect(page).to_have_url("https://www.litres.ru/")
+
+
+def test_locator_xpath(page: Page):
+    expect(page.get_by_title("YouTube")).to_be_visible()
+
+
+
+
+
+
