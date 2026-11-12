@@ -30,7 +30,8 @@ def test_locator_alttext(page:Page):
 
 
 def test_locator_xpath(page: Page):
-    expect(page.get_by_title("YouTube")).to_be_visible()
+    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")  # скролл страницы в самый низ
+    expect(page.get_by_title("YouTube")).to_be_visible(timeout=15000)
 
 
 

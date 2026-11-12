@@ -1,36 +1,26 @@
-import re
-
-from playwright.sync_api import Page, expect
-
-def test_main_actions(page: Page):
-    page.wait_for_load_state("networkidle")
-    page.get_by_test_id("search__input").fill("python")
-    page.keyboard.press("Enter")
-    expect(page).to_have_url("https://www.litres.ru/search/?q=python")
-
-    sub = page.locator('[role="switch"][aria-description*="Подпиской"]')
-    sub.click()
-    expect(sub).to_have_attribute("aria-checked", "true")  # само дождётся асинхронного обновления
-
-    sub.click()
-    expect(sub).to_have_attribute("aria-checked", "false")  # вернули в исходное состояние
-
-    page.locator('label[for="languages-ru"]').click()
-    expect(page.locator("#languages-ru")).to_be_checked()  # input стал checked
-    expect(page).to_have_url(re.compile(r"languages=ru"))
-
-def test_waiting(page: Page):
-    page.wait_for_load_state("networkidle")
-    page.get_by_test_id("search__input").fill("Самоучитель python")
-    page.get_by_test_id("search__button").click()
-
-    expect(
-        page.get_by_role("heading", name="Результаты поиска «Самоучитель python»")
-    ).to_be_visible(timeout=15000)
-
-    expect(page).to_have_title("Результаты поиска по книгам: «Самоучитель python»")
-
-    books=page.get_by_test_id("art__wrapper")
-    expect(books).to_have_count(24, timeout=10000)
+import pytest
 
 
+@pytest.mark.parametrize("text", ["python"])
+def test_main_actions(page, home, results, text):
+    home.search(text, submit_with_enter=True)
+    results.expect_search_url(text)
+
+    results.subscription_switch.click()
+    results.expect_subscription_switch(True)    # само дождётся асинхронного обновления
+
+    results.subscription_switch.click()
+    results.expect_subscription_switch(False)    # вернули в исходное состояние
+
+    results.russian_filtr.click()
+    results.expect_russian_filter_checked()      # input стал checked
+    results.expect_russian_filter_in_url()
+
+
+@pytest.mark.parametrize("text", ["Самоучитель python"])
+def test_waiting(page, home, results, text):
+    home.search(text)
+
+    results.expect_results_heading(text)
+    results.expect_title_contains(text)
+    results.expect_books_count(24)
