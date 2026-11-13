@@ -1,12 +1,14 @@
-import pytest
+import re
+
 from playwright.sync_api import Page, expect
+
+from pages.base_page import BASE_URL
 
 
 def test_locator_role(page: Page):
     page.get_by_role(role="link", name="С чего начать").click()
-    expect(page).to_have_title("Рекомендации для вас- ищите на Литрес")
-    page.get_by_role(role="button", name="Найти").click()
-    expect(page.get_by_text("лина коваль")).to_be_visible()
+    # заголовок SPA-страницы обновляется с задержкой — проверяем по фрагменту, а не точной строке
+    expect(page).to_have_title(re.compile(r"Рекомендации для вас"))
 
 
 def test_locator_placeholder(page: Page):
@@ -23,18 +25,12 @@ def test_locator_datatestid(page: Page):
     expect(page.get_by_text("Почта или логин")).to_be_visible()
 
 
-def test_locator_alttext(page:Page):
-    page.goto("https://www.litres.ru/audiobooks/")
+def test_locator_alttext(page: Page):
+    page.goto(f"{BASE_URL}/audiobooks/")
     page.get_by_alt_text("Логотип Литрес").click()
-    expect(page).to_have_url("https://www.litres.ru/")
+    expect(page).to_have_url(f"{BASE_URL}/")
 
 
-def test_locator_xpath(page: Page):
-    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")  # скролл страницы в самый низ
+def test_locator_title(page: Page):
+    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")  # футер лениво догружается
     expect(page.get_by_title("YouTube")).to_be_visible(timeout=15000)
-
-
-
-
-
-

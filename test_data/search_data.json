@@ -1,0 +1,22 @@
+{
+  "search_input": [
+    {
+      "id": "python_books",
+      "query": "python",
+      "expected_result_count": 24,
+      "description": "Поиск книг по Python"
+    },
+    {
+      "id": "game_of_thrones",
+      "query": "Игра престолов",
+      "expected_result_count": 24,
+      "description": "Поиск книг Игра престолов"
+    },
+    {
+      "id": "self_edu_python",
+      "query": "Самоучитель python",
+      "expected_result_count": 24,
+      "description": "Поиск книг Самоучитель python"
+    }
+  ]
+}

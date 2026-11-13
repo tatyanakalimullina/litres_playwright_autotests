@@ -1,7 +1,10 @@
 import re
+from urllib.parse import quote
 
 from playwright.sync_api import Locator, expect
-from pages.base_page import BasePage
+
+from pages.base_page import BASE_URL, BasePage
+
 
 class SearchResultsPage(BasePage):
 
@@ -15,12 +18,12 @@ class SearchResultsPage(BasePage):
         return self.page.get_by_test_id("art__wrapper")
 
     @property
-    def russian_filtr(self) -> Locator:
+    def russian_filter(self) -> Locator:
         # кликабельна подпись фильтра: настоящий input скрыт и перекрыт label
         return self.page.locator("label[for='languages-ru']")
 
     @property
-    def russian_filtr_checkbox(self) -> Locator:
+    def russian_filter_checkbox(self) -> Locator:
         return self.page.locator("#languages-ru")
 
     @property
@@ -32,8 +35,10 @@ class SearchResultsPage(BasePage):
         return self.page.get_by_role("heading", name=f'Результаты поиска «{text}»')
 
     #проверки
-    def expect_search_url(self, text) -> None:
-        expect(self.page).to_have_url(f"https://www.litres.ru/search/?q={text}")
+    def expect_search_url(self, text, timeout: int = 15000) -> None:
+        # page.url отдаёт кириллицу в percent-кодировке — кодируем ожидание так же;
+        # SPA-переход медленный, дефолтных 5 с под нагрузкой не хватает
+        expect(self.page).to_have_url(f"{BASE_URL}/search/?q={quote(text)}", timeout=timeout)
 
     def expect_russian_filter_in_url(self) -> None:
         expect(self.page).to_have_url(re.compile(r"languages=ru"))
@@ -42,7 +47,7 @@ class SearchResultsPage(BasePage):
         expect(self.subscription_switch).to_have_attribute("aria-checked", "true" if on else "false")
 
     def expect_russian_filter_checked(self) -> None:
-        expect(self.russian_filtr_checkbox).to_be_checked()
+        expect(self.russian_filter_checkbox).to_be_checked()
 
     def expect_results_heading(self, text, timeout: int = 15000) -> None:
         expect(self.results_heading(text)).to_be_visible(timeout=timeout)
