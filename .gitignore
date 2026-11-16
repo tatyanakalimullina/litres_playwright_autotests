@@ -10,4 +10,5 @@ venv/
 
 # Артефакты прогонов
 screenshot/
+allure-results/
 reports/

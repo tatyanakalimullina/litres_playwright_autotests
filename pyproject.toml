@@ -3,6 +3,7 @@ name = "pythonproject"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
+    "allure-pytest>=2.16.2",
     "playwright>=1.64.1",
     "pytest>=9.2.0",
     "pytest-playwright>=0.10.0",

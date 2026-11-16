@@ -1,0 +1,17 @@
+# Локальное окружение (в образе своё, соберётся из uv.lock)
+.venv/
+venv/
+
+# Git и IDE
+.git/
+.idea/
+
+# Кэши Python и pytest
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Артефакты прогонов
+screenshot/
+allure-results/
+reports/
