@@ -1,0 +1,24 @@
+name: litres-tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build test image
+        run: docker build -t litres-tests .
+
+      - name: Run tests
+        run: docker run --rm -v "$PWD/allure-results:/app/allure-results" litres-tests
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            allure-results/
+            screenshot/

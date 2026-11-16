@@ -1,0 +1,3 @@
+# Настройки act (локальный запуск GitHub Actions):
+# образ-подставка ubuntu-latest с docker CLI внутри — шаги docker build/run работают через смонтированный сокет
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
