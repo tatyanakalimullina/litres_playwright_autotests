@@ -2,6 +2,7 @@ from pathlib import Path
 from shutil import rmtree
 
 import pytest
+import allure
 from playwright.sync_api import Page
 
 from pages.base_page import BASE_URL
@@ -41,3 +42,12 @@ def pytest_runtest_makereport(item):
             path = Path("screenshot") / f"{item.name}.png"
             path.parent.mkdir(exist_ok=True)
             page.screenshot(path=str(path))
+
+
+@pytest.fixture(autouse=True)
+def screenshot_on_failure(page, request):
+    yield
+
+    if request.node.rep_call.failed:
+        screenshot=page.screenshot(full_page=True)
+        allure.attach(screenshot, name='Screenshot on failure', attachment_type=allure.attachment_type.PNG)

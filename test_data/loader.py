@@ -11,6 +11,7 @@ class SearchTestData:
     id: str
     query: str
     expected_count: int
+    description: str
 
 
 def load_search_data(ids: Optional[Iterable[str]] = None) -> List[SearchTestData]:
@@ -25,6 +26,7 @@ def load_search_data(ids: Optional[Iterable[str]] = None) -> List[SearchTestData
             id=item["id"],
             query=item["query"],
             expected_count=item["expected_result_count"],
+            description=item["description"]
         )
         for item in raw_data
     ]
